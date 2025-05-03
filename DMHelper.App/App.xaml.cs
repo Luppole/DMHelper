@@ -16,56 +16,82 @@ namespace DMHelper.App;
 /// </summary>
 public partial class App : Application
 {
-    private ServiceProvider _serviceProvider;
-    private IConfiguration _configuration;
+    private ServiceProvider? _serviceProvider;
+    private IConfiguration? _configuration;
 
     public App()
     {
-        _configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .Build();
-
-        var services = new ServiceCollection();
-        ConfigureServices(services);
-        _serviceProvider = services.BuildServiceProvider();
-
-        // Handle unhandled exceptions
-        AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+        try
         {
-            MessageBox.Show($"An unhandled exception occurred: {e.ExceptionObject}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        };
+            _configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
 
-        DispatcherUnhandledException += (sender, e) =>
+            var services = new ServiceCollection();
+            ConfigureServices(services);
+            _serviceProvider = services.BuildServiceProvider();
+
+            // Handle unhandled exceptions
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+            {
+                MessageBox.Show($"An unhandled exception occurred: {e.ExceptionObject}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            };
+
+            DispatcherUnhandledException += (sender, e) =>
+            {
+                MessageBox.Show($"An unhandled exception occurred: {e.Exception}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                e.Handled = true;
+            };
+        }
+        catch (Exception ex)
         {
-            MessageBox.Show($"An unhandled exception occurred: {e.Exception}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            e.Handled = true;
-        };
+            MessageBox.Show($"Error during application startup: {ex}", "Startup Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            Shutdown();
+        }
     }
 
     private void ConfigureServices(IServiceCollection services)
     {
-        // Database
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
+        try
+        {
+            if (_configuration == null)
+            {
+                throw new InvalidOperationException("Configuration is not initialized.");
+            }
 
-        // Services
-        services.AddSingleton<CampaignService>();
+            // Database
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
 
-        // ViewModels
-        services.AddTransient<CampaignViewModel>();
-        services.AddTransient<MainWindowViewModel>();
+            // Services
+            services.AddSingleton<CampaignService>();
 
-        // Views
-        services.AddTransient<MainWindow>();
+            // ViewModels
+            services.AddTransient<CampaignViewModel>();
+            services.AddTransient<MainWindowViewModel>();
+
+            // Views
+            services.AddTransient<MainWindow>();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error configuring services: {ex}", "Configuration Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            throw;
+        }
     }
 
     protected override void OnStartup(StartupEventArgs e)
     {
-        base.OnStartup(e);
-
         try
         {
+            base.OnStartup(e);
+
+            if (_serviceProvider == null)
+            {
+                throw new InvalidOperationException("Service provider is not initialized.");
+            }
+
             var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
             mainWindow.DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>();
             mainWindow.Show();

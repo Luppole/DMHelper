@@ -136,3 +136,4 @@ C:\Users\itama\Desktop\DMHelper\DMHelper.App\obj\Debug\net8.0-windows\DMHelper.A
 C:\Users\itama\Desktop\DMHelper\DMHelper.App\obj\Debug\net8.0-windows\DMHelper.App.genruntimeconfig.cache
 C:\Users\itama\Desktop\DMHelper\DMHelper.App\obj\Debug\net8.0-windows\ref\DMHelper.App.dll
 C:\Users\itama\Desktop\DMHelper\DMHelper.App\bin\Debug\net8.0-windows\appsettings.json
+C:\Users\itama\Desktop\DMHelper\DMHelper.App\obj\Debug\net8.0-windows\DMHelper.App.sourcelink.json
