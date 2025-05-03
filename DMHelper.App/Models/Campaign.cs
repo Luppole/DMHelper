@@ -6,10 +6,26 @@ namespace DMHelper.App.Models;
 
 public class Campaign
 {
+    [JsonProperty("id")]
     public string Id { get; set; }
+    
+    [JsonProperty("name")]
     public string Name { get; set; }
+    
+    [JsonProperty("description")]
     public string Description { get; set; }
-    // Add other properties as needed
+    
+    [JsonProperty("sessions")]
+    public List<Session> Sessions { get; set; } = new();
+    
+    [JsonProperty("npcs")]
+    public List<NPC> NPCs { get; set; } = new();
+    
+    [JsonProperty("locations")]
+    public List<Location> Locations { get; set; } = new();
+    
+    [JsonProperty("players")]
+    public List<Player> Players { get; set; } = new();
 }
 
 public class Session
