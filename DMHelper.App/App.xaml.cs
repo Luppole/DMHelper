@@ -2,10 +2,8 @@
 using System.Data;
 using System.IO;
 using System.Windows;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using DMHelper.App.Data;
 using DMHelper.App.Services;
 using DMHelper.App.ViewModels;
 
@@ -55,11 +53,8 @@ public partial class App : Application
     {
         try
         {
-            // Database
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
-
             // Services
+            services.AddSingleton<FirebaseService>();
             services.AddSingleton<CampaignService>();
 
             // ViewModels

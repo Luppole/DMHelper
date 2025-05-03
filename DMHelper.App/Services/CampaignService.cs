@@ -1,123 +1,61 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using DMHelper.App.Data;
 using DMHelper.App.Models;
 
 namespace DMHelper.App.Services;
 
 public class CampaignService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly FirebaseService _firebaseService;
 
-    public CampaignService(ApplicationDbContext context)
+    public CampaignService(FirebaseService firebaseService)
     {
-        _context = context;
+        _firebaseService = firebaseService;
     }
 
     public async Task<List<Campaign>> GetAllCampaignsAsync()
     {
-        return await _context.Campaigns
-            .Include(c => c.Sessions)
-            .Include(c => c.NPCs)
-            .Include(c => c.Locations)
-            .Include(c => c.Players)
-            .ToListAsync();
+        return await _firebaseService.GetAllCampaignsAsync();
     }
 
     public async Task<Campaign?> GetCampaignByIdAsync(int id)
     {
-        return await _context.Campaigns
-            .Include(c => c.Sessions)
-            .Include(c => c.NPCs)
-            .Include(c => c.Locations)
-            .Include(c => c.Players)
-            .FirstOrDefaultAsync(c => c.Id == id);
+        return await _firebaseService.GetCampaignByIdAsync(id);
     }
 
     public async Task<Campaign> CreateCampaignAsync(Campaign campaign)
     {
-        campaign.CreatedDate = DateTime.UtcNow;
-        campaign.LastModifiedDate = DateTime.UtcNow;
-        
-        _context.Campaigns.Add(campaign);
-        await _context.SaveChangesAsync();
-        return campaign;
+        return await _firebaseService.CreateCampaignAsync(campaign);
     }
 
     public async Task<Campaign> UpdateCampaignAsync(Campaign campaign)
     {
-        campaign.LastModifiedDate = DateTime.UtcNow;
-        
-        _context.Campaigns.Update(campaign);
-        await _context.SaveChangesAsync();
-        return campaign;
+        return await _firebaseService.UpdateCampaignAsync(campaign);
     }
 
     public async Task DeleteCampaignAsync(int id)
     {
-        var campaign = await _context.Campaigns.FindAsync(id);
-        if (campaign != null)
-        {
-            _context.Campaigns.Remove(campaign);
-            await _context.SaveChangesAsync();
-        }
+        await _firebaseService.DeleteCampaignAsync(id);
     }
 
     public async Task<Session> AddSessionToCampaignAsync(int campaignId, Session session)
     {
-        var campaign = await _context.Campaigns.FindAsync(campaignId);
-        if (campaign == null)
-            throw new ArgumentException("Campaign not found", nameof(campaignId));
-
-        session.CampaignId = campaignId;
-        campaign.Sessions.Add(session);
-        campaign.LastModifiedDate = DateTime.UtcNow;
-        
-        await _context.SaveChangesAsync();
-        return session;
+        return await _firebaseService.AddSessionToCampaignAsync(campaignId, session);
     }
 
     public async Task<NPC> AddNPCToCampaignAsync(int campaignId, NPC npc)
     {
-        var campaign = await _context.Campaigns.FindAsync(campaignId);
-        if (campaign == null)
-            throw new ArgumentException("Campaign not found", nameof(campaignId));
-
-        npc.CampaignId = campaignId;
-        campaign.NPCs.Add(npc);
-        campaign.LastModifiedDate = DateTime.UtcNow;
-        
-        await _context.SaveChangesAsync();
-        return npc;
+        return await _firebaseService.AddNPCToCampaignAsync(campaignId, npc);
     }
 
     public async Task<Location> AddLocationToCampaignAsync(int campaignId, Location location)
     {
-        var campaign = await _context.Campaigns.FindAsync(campaignId);
-        if (campaign == null)
-            throw new ArgumentException("Campaign not found", nameof(campaignId));
-
-        location.CampaignId = campaignId;
-        campaign.Locations.Add(location);
-        campaign.LastModifiedDate = DateTime.UtcNow;
-        
-        await _context.SaveChangesAsync();
-        return location;
+        return await _firebaseService.AddLocationToCampaignAsync(campaignId, location);
     }
 
     public async Task<Player> AddPlayerToCampaignAsync(int campaignId, Player player)
     {
-        var campaign = await _context.Campaigns.FindAsync(campaignId);
-        if (campaign == null)
-            throw new ArgumentException("Campaign not found", nameof(campaignId));
-
-        player.CampaignId = campaignId;
-        campaign.Players.Add(player);
-        campaign.LastModifiedDate = DateTime.UtcNow;
-        
-        await _context.SaveChangesAsync();
-        return player;
+        return await _firebaseService.AddPlayerToCampaignAsync(campaignId, player);
     }
 } 
