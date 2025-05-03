@@ -1,0 +1,115 @@
+﻿<Window x:Class="DMHelper.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DMHelper.App"
+        xmlns:viewmodels="clr-namespace:DMHelper.App.ViewModels"
+        mc:Ignorable="d"
+        Title="{Binding Title}" Height="720" Width="1280"
+        WindowStartupLocation="CenterScreen">
+    
+    <Window.DataContext>
+        <viewmodels:MainWindowViewModel/>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Navigation Menu -->
+        <Border Background="#2D2D30" Grid.Column="0">
+            <StackPanel Margin="10">
+                <TextBlock Text="DM Helper" 
+                         Foreground="White" 
+                         FontSize="24" 
+                         FontWeight="Bold" 
+                         Margin="0,0,0,20"/>
+                
+                <Button Content="Campaign Manager" 
+                        Command="{Binding NavigateToCommand}" 
+                        CommandParameter="Campaign"
+                        Style="{StaticResource NavigationButtonStyle}"
+                        Margin="0,5"/>
+                
+                <Button Content="Combat Tracker" 
+                        Command="{Binding NavigateToCommand}" 
+                        CommandParameter="Combat"
+                        Style="{StaticResource NavigationButtonStyle}"
+                        Margin="0,5"/>
+                
+                <Button Content="Encounter Builder" 
+                        Command="{Binding NavigateToCommand}" 
+                        CommandParameter="Encounter"
+                        Style="{StaticResource NavigationButtonStyle}"
+                        Margin="0,5"/>
+                
+                <Button Content="Real-time Assistant" 
+                        Command="{Binding NavigateToCommand}" 
+                        CommandParameter="Assistant"
+                        Style="{StaticResource NavigationButtonStyle}"
+                        Margin="0,5"/>
+                
+                <Button Content="Player Display" 
+                        Command="{Binding NavigateToCommand}" 
+                        CommandParameter="Player"
+                        Style="{StaticResource NavigationButtonStyle}"
+                        Margin="0,5"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Main Content Area -->
+        <Border Background="#1E1E1E" Grid.Column="1">
+            <ContentControl Content="{Binding CurrentView}">
+                <ContentControl.Resources>
+                    <Style TargetType="ContentControl">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <TextBlock Text="{Binding}" 
+                                             Foreground="White" 
+                                             FontSize="24" 
+                                             HorizontalAlignment="Center" 
+                                             VerticalAlignment="Center"/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ContentControl.Resources>
+            </ContentControl>
+        </Border>
+    </Grid>
+
+    <Window.Resources>
+        <Style x:Key="NavigationButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#3E3E42"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#007ACC"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+</Window>
