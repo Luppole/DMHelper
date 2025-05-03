@@ -16,8 +16,8 @@ namespace DMHelper.App;
 /// </summary>
 public partial class App : Application
 {
-    private ServiceProvider? _serviceProvider;
-    private IConfiguration? _configuration;
+    private ServiceProvider _serviceProvider;
+    private IConfiguration _configuration;
 
     public App()
     {
