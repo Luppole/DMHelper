@@ -12,32 +12,68 @@ namespace DMHelper.App.Services;
 public class FirebaseService
 {
     private readonly FirebaseClient _firebaseClient;
-    private const string BasePath = "dmhelper";
+    private readonly string _basePath;
 
     public FirebaseService(IConfiguration configuration)
     {
         var firebaseConfig = configuration.GetSection("Firebase");
-        var firebaseUrl = $"https://{firebaseConfig["ProjectId"]}.firebaseio.com";
-        var authSecret = firebaseConfig["ApiKey"];
-
+        var authDomain = firebaseConfig["AuthDomain"];
+        
+        // Extract the project ID from the auth domain
+        var projectId = authDomain?.Split('.')[0];
+        
+        _basePath = "dmhelper";
         _firebaseClient = new FirebaseClient(
-            firebaseUrl,
+            $"https://{projectId}.firebaseio.com/",
             new FirebaseOptions
             {
-                AuthTokenAsyncFactory = () => Task.FromResult(authSecret)
-            });
+                AuthTokenAsyncFactory = () => Task.FromResult(firebaseConfig["ApiKey"])
+            }
+        );
+    }
+
+    public async Task<List<T>> GetCollectionAsync<T>(string collectionPath) where T : class
+    {
+        try
+        {
+            var collection = await _firebaseClient
+                .Child(_basePath)
+                .Child(collectionPath)
+                .OnceAsync<T>();
+
+            var result = new List<T>();
+            foreach (var item in collection)
+            {
+                var dataWithId = item.Object;
+                // If your object has an Id property, you can set it here:
+                // typeof(T).GetProperty("Id")?.SetValue(dataWithId, item.Key);
+                result.Add(dataWithId);
+            }
+            return result;
+        }
+        catch (Firebase.Database.FirebaseException ex) when (ex.Message.Contains("404"))
+        {
+            // Collection doesn't exist yet, return empty list
+            return new List<T>();
+        }
+    }
+
+    public async Task<string> AddItemAsync<T>(string collectionPath, T item) where T : class
+    {
+        var result = await _firebaseClient
+            .Child(_basePath)
+            .Child(collectionPath)
+            .PostAsync(item);
+
+        return result.Key;
     }
 
     public async Task<List<Campaign>> GetAllCampaignsAsync()
     {
         try
         {
-            var campaigns = await _firebaseClient
-                .Child(BasePath)
-                .Child("campaigns")
-                .OnceAsync<Campaign>();
-
-            return campaigns.Select(x => x.Object).ToList();
+            var campaigns = await GetCollectionAsync<Campaign>("campaigns");
+            return campaigns;
         }
         catch (Exception ex)
         {
@@ -50,7 +86,7 @@ public class FirebaseService
         try
         {
             var campaign = await _firebaseClient
-                .Child(BasePath)
+                .Child(_basePath)
                 .Child("campaigns")
                 .Child(id.ToString())
                 .OnceSingleAsync<Campaign>();
@@ -70,12 +106,8 @@ public class FirebaseService
             campaign.CreatedDate = DateTime.UtcNow;
             campaign.LastModifiedDate = DateTime.UtcNow;
 
-            var result = await _firebaseClient
-                .Child(BasePath)
-                .Child("campaigns")
-                .PostAsync(campaign);
-
-            campaign.Id = int.Parse(result.Key);
+            var resultKey = await AddItemAsync("campaigns", campaign);
+            campaign.Id = int.Parse(resultKey);
             return campaign;
         }
         catch (Exception ex)
@@ -91,7 +123,7 @@ public class FirebaseService
             campaign.LastModifiedDate = DateTime.UtcNow;
 
             await _firebaseClient
-                .Child(BasePath)
+                .Child(_basePath)
                 .Child("campaigns")
                 .Child(campaign.Id.ToString())
                 .PutAsync(campaign);
@@ -109,7 +141,7 @@ public class FirebaseService
         try
         {
             await _firebaseClient
-                .Child(BasePath)
+                .Child(_basePath)
                 .Child("campaigns")
                 .Child(id.ToString())
                 .DeleteAsync();
@@ -129,12 +161,8 @@ public class FirebaseService
                 throw new Exception($"Campaign with ID {campaignId} not found");
 
             session.CampaignId = campaignId;
-            var result = await _firebaseClient
-                .Child(BasePath)
-                .Child("sessions")
-                .PostAsync(session);
-
-            session.Id = int.Parse(result.Key);
+            var resultKey = await AddItemAsync("sessions", session);
+            session.Id = int.Parse(resultKey);
             campaign.Sessions.Add(session);
             campaign.LastModifiedDate = DateTime.UtcNow;
 
@@ -156,12 +184,8 @@ public class FirebaseService
                 throw new Exception($"Campaign with ID {campaignId} not found");
 
             npc.CampaignId = campaignId;
-            var result = await _firebaseClient
-                .Child(BasePath)
-                .Child("npcs")
-                .PostAsync(npc);
-
-            npc.Id = int.Parse(result.Key);
+            var resultKey = await AddItemAsync("npcs", npc);
+            npc.Id = int.Parse(resultKey);
             campaign.NPCs.Add(npc);
             campaign.LastModifiedDate = DateTime.UtcNow;
 
@@ -183,12 +207,8 @@ public class FirebaseService
                 throw new Exception($"Campaign with ID {campaignId} not found");
 
             location.CampaignId = campaignId;
-            var result = await _firebaseClient
-                .Child(BasePath)
-                .Child("locations")
-                .PostAsync(location);
-
-            location.Id = int.Parse(result.Key);
+            var resultKey = await AddItemAsync("locations", location);
+            location.Id = int.Parse(resultKey);
             campaign.Locations.Add(location);
             campaign.LastModifiedDate = DateTime.UtcNow;
 
@@ -210,12 +230,8 @@ public class FirebaseService
                 throw new Exception($"Campaign with ID {campaignId} not found");
 
             player.CampaignId = campaignId;
-            var result = await _firebaseClient
-                .Child(BasePath)
-                .Child("players")
-                .PostAsync(player);
-
-            player.Id = int.Parse(result.Key);
+            var resultKey = await AddItemAsync("players", player);
+            player.Id = int.Parse(resultKey);
             campaign.Players.Add(player);
             campaign.LastModifiedDate = DateTime.UtcNow;
 
@@ -227,4 +243,4 @@ public class FirebaseService
             throw new Exception($"Failed to add player to campaign {campaignId}", ex);
         }
     }
-} 
+}

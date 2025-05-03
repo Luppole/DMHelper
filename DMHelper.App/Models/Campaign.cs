@@ -6,32 +6,10 @@ namespace DMHelper.App.Models;
 
 public class Campaign
 {
-    [JsonProperty("id")]
-    public int Id { get; set; }
-
-    [JsonProperty("name")]
-    public string Name { get; set; } = string.Empty;
-
-    [JsonProperty("description")]
-    public string Description { get; set; } = string.Empty;
-
-    [JsonProperty("createdDate")]
-    public DateTime CreatedDate { get; set; }
-
-    [JsonProperty("lastModifiedDate")]
-    public DateTime LastModifiedDate { get; set; }
-
-    [JsonProperty("sessions")]
-    public List<Session> Sessions { get; set; } = new();
-
-    [JsonProperty("npcs")]
-    public List<NPC> NPCs { get; set; } = new();
-
-    [JsonProperty("locations")]
-    public List<Location> Locations { get; set; } = new();
-
-    [JsonProperty("players")]
-    public List<Player> Players { get; set; } = new();
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    // Add other properties as needed
 }
 
 public class Session
@@ -206,4 +184,4 @@ public class Loot
 
     [JsonProperty("isMagical")]
     public bool IsMagical { get; set; }
-} 
+}

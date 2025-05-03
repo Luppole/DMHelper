@@ -8,6 +8,7 @@ namespace DMHelper.App.Services;
 public class CampaignService
 {
     private readonly FirebaseService _firebaseService;
+    private const string CollectionPath = "campaigns";
 
     public CampaignService(FirebaseService firebaseService)
     {
@@ -16,46 +17,21 @@ public class CampaignService
 
     public async Task<List<Campaign>> GetAllCampaignsAsync()
     {
-        return await _firebaseService.GetAllCampaignsAsync();
+        try
+        {
+            var campaigns = await _firebaseService.GetCollectionAsync<Campaign>(CollectionPath);
+            return campaigns ?? new List<Campaign>();
+        }
+        catch (System.Exception ex)
+        {
+            // Log the error
+            System.Diagnostics.Debug.WriteLine($"Error getting campaigns: {ex}");
+            return new List<Campaign>();
+        }
     }
 
-    public async Task<Campaign?> GetCampaignByIdAsync(int id)
+    public async Task<string> CreateCampaignAsync(Campaign campaign)
     {
-        return await _firebaseService.GetCampaignByIdAsync(id);
+        return await _firebaseService.AddItemAsync(CollectionPath, campaign);
     }
-
-    public async Task<Campaign> CreateCampaignAsync(Campaign campaign)
-    {
-        return await _firebaseService.CreateCampaignAsync(campaign);
-    }
-
-    public async Task<Campaign> UpdateCampaignAsync(Campaign campaign)
-    {
-        return await _firebaseService.UpdateCampaignAsync(campaign);
-    }
-
-    public async Task DeleteCampaignAsync(int id)
-    {
-        await _firebaseService.DeleteCampaignAsync(id);
-    }
-
-    public async Task<Session> AddSessionToCampaignAsync(int campaignId, Session session)
-    {
-        return await _firebaseService.AddSessionToCampaignAsync(campaignId, session);
-    }
-
-    public async Task<NPC> AddNPCToCampaignAsync(int campaignId, NPC npc)
-    {
-        return await _firebaseService.AddNPCToCampaignAsync(campaignId, npc);
-    }
-
-    public async Task<Location> AddLocationToCampaignAsync(int campaignId, Location location)
-    {
-        return await _firebaseService.AddLocationToCampaignAsync(campaignId, location);
-    }
-
-    public async Task<Player> AddPlayerToCampaignAsync(int campaignId, Player player)
-    {
-        return await _firebaseService.AddPlayerToCampaignAsync(campaignId, player);
-    }
-} 
+}
