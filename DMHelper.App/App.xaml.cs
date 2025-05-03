@@ -53,6 +53,9 @@ public partial class App : Application
     {
         try
         {
+            // Register configuration
+            services.AddSingleton<IConfiguration>(_configuration);
+
             // Services
             services.AddSingleton<FirebaseService>();
             services.AddSingleton<CampaignService>();
