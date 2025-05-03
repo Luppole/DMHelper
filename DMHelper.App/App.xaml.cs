@@ -55,11 +55,6 @@ public partial class App : Application
     {
         try
         {
-            if (_configuration == null)
-            {
-                throw new InvalidOperationException("Configuration is not initialized.");
-            }
-
             // Database
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
@@ -86,11 +81,6 @@ public partial class App : Application
         try
         {
             base.OnStartup(e);
-
-            if (_serviceProvider == null)
-            {
-                throw new InvalidOperationException("Service provider is not initialized.");
-            }
 
             var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
             mainWindow.DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>();
