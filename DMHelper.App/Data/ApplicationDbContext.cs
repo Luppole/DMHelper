@@ -1,18 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using DMHelper.App.Models;
+using System.Text.Json;
 
 namespace DMHelper.App.Data;
 
 public class ApplicationDbContext : DbContext
 {
-    public DbSet<Campaign> Campaigns { get; set; }
-    public DbSet<Session> Sessions { get; set; }
-    public DbSet<NPC> NPCs { get; set; }
-    public DbSet<Location> Locations { get; set; }
-    public DbSet<Player> Players { get; set; }
-    public DbSet<Encounter> Encounters { get; set; }
-    public DbSet<Monster> Monsters { get; set; }
-    public DbSet<Loot> Loot { get; set; }
+    public DbSet<Campaign> Campaigns { get; set; } = null!;
+    public DbSet<Session> Sessions { get; set; } = null!;
+    public DbSet<NPC> NPCs { get; set; } = null!;
+    public DbSet<Location> Locations { get; set; } = null!;
+    public DbSet<Player> Players { get; set; } = null!;
+    public DbSet<Encounter> Encounters { get; set; } = null!;
+    public DbSet<Monster> Monsters { get; set; } = null!;
+    public DbSet<Loot> Loot { get; set; } = null!;
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -67,5 +68,37 @@ public class ApplicationDbContext : DbContext
             .WithOne()
             .HasForeignKey(l => l.Id)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure Dictionary properties as JSON
+        modelBuilder.Entity<NPC>()
+            .Property(n => n.Relationships)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null) ?? "{}",
+                v => JsonSerializer.Deserialize<Dictionary<string, string>>(v, (JsonSerializerOptions?)null) ?? new());
+
+        modelBuilder.Entity<Player>()
+            .Property(p => p.Stats)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null) ?? "{}",
+                v => JsonSerializer.Deserialize<Dictionary<string, int>>(v, (JsonSerializerOptions?)null) ?? new());
+
+        modelBuilder.Entity<Monster>()
+            .Property(m => m.Stats)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null) ?? "{}",
+                v => JsonSerializer.Deserialize<Dictionary<string, int>>(v, (JsonSerializerOptions?)null) ?? new());
+
+        // Configure List properties as JSON
+        modelBuilder.Entity<Location>()
+            .Property(l => l.ConnectedLocations)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null) ?? "[]",
+                v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions?)null) ?? new());
+
+        modelBuilder.Entity<Monster>()
+            .Property(m => m.Abilities)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null) ?? "[]",
+                v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions?)null) ?? new());
     }
 } 

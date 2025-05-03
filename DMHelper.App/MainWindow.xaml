@@ -4,14 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DMHelper.App"
+        xmlns:views="clr-namespace:DMHelper.App.Views"
         xmlns:viewmodels="clr-namespace:DMHelper.App.ViewModels"
         mc:Ignorable="d"
         Title="{Binding Title}" Height="720" Width="1280"
-        WindowStartupLocation="CenterScreen">
-    
-    <Window.DataContext>
-        <viewmodels:MainWindowViewModel/>
-    </Window.DataContext>
+        WindowStartupLocation="CenterScreen"
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -62,22 +60,64 @@
 
         <!-- Main Content Area -->
         <Border Background="#1E1E1E" Grid.Column="1">
-            <ContentControl Content="{Binding CurrentView}">
-                <ContentControl.Resources>
+            <ContentControl>
+                <ContentControl.Style>
                     <Style TargetType="ContentControl">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate>
-                                    <TextBlock Text="{Binding}" 
-                                             Foreground="White" 
-                                             FontSize="24" 
-                                             HorizontalAlignment="Center" 
-                                             VerticalAlignment="Center"/>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CurrentView}" Value="Campaign">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <views:CampaignView DataContext="{Binding CampaignViewModel}"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CurrentView}" Value="Combat">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <TextBlock Text="Combat Tracker" 
+                                                 Foreground="White" 
+                                                 FontSize="24" 
+                                                 HorizontalAlignment="Center" 
+                                                 VerticalAlignment="Center"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CurrentView}" Value="Encounter">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <TextBlock Text="Encounter Builder" 
+                                                 Foreground="White" 
+                                                 FontSize="24" 
+                                                 HorizontalAlignment="Center" 
+                                                 VerticalAlignment="Center"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CurrentView}" Value="Assistant">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <TextBlock Text="Real-time Assistant" 
+                                                 Foreground="White" 
+                                                 FontSize="24" 
+                                                 HorizontalAlignment="Center" 
+                                                 VerticalAlignment="Center"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CurrentView}" Value="Player">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <TextBlock Text="Player Display" 
+                                                 Foreground="White" 
+                                                 FontSize="24" 
+                                                 HorizontalAlignment="Center" 
+                                                 VerticalAlignment="Center"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
                     </Style>
-                </ContentControl.Resources>
+                </ContentControl.Style>
             </ContentControl>
         </Border>
     </Grid>

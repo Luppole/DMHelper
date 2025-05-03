@@ -7,7 +7,7 @@ using DMHelper.App.Services;
 
 namespace DMHelper.App.ViewModels;
 
-public partial class CampaignViewModel : ViewModelBase
+public partial class CampaignViewModel : ObservableObject
 {
     private readonly CampaignService _campaignService;
 
@@ -23,10 +23,12 @@ public partial class CampaignViewModel : ViewModelBase
     [ObservableProperty]
     private string _newCampaignDescription = string.Empty;
 
+    [ObservableProperty]
+    private bool _isBusy;
+
     public CampaignViewModel(CampaignService campaignService)
     {
         _campaignService = campaignService;
-        Title = "Campaign Manager";
         LoadCampaignsAsync();
     }
 

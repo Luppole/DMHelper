@@ -6,11 +6,8 @@
              xmlns:local="clr-namespace:DMHelper.App.Views"
              xmlns:viewmodels="clr-namespace:DMHelper.App.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    
-    <UserControl.DataContext>
-        <viewmodels:CampaignViewModel/>
-    </UserControl.DataContext>
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=viewmodels:CampaignViewModel}">
 
     <Grid>
         <Grid.ColumnDefinitions>

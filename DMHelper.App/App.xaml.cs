@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using DMHelper.App.Data;
 using DMHelper.App.Services;
 using DMHelper.App.ViewModels;
-using DMHelper.App.Views;
 
 namespace DMHelper.App;
 
@@ -30,6 +29,18 @@ public partial class App : Application
         var services = new ServiceCollection();
         ConfigureServices(services);
         _serviceProvider = services.BuildServiceProvider();
+
+        // Handle unhandled exceptions
+        AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+        {
+            MessageBox.Show($"An unhandled exception occurred: {e.ExceptionObject}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        };
+
+        DispatcherUnhandledException += (sender, e) =>
+        {
+            MessageBox.Show($"An unhandled exception occurred: {e.Exception}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            e.Handled = true;
+        };
     }
 
     private void ConfigureServices(IServiceCollection services)
@@ -42,26 +53,28 @@ public partial class App : Application
         services.AddSingleton<CampaignService>();
 
         // ViewModels
-        services.AddTransient<MainWindowViewModel>();
         services.AddTransient<CampaignViewModel>();
+        services.AddTransient<MainWindowViewModel>();
 
         // Views
         services.AddTransient<MainWindow>();
-        services.AddTransient<CampaignView>();
     }
 
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
-        var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
-        mainWindow.DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>();
-
-        // Configure CampaignView
-        var campaignView = _serviceProvider.GetRequiredService<CampaignView>();
-        campaignView.DataContext = _serviceProvider.GetRequiredService<CampaignViewModel>();
-
-        mainWindow.Show();
+        try
+        {
+            var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+            mainWindow.DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>();
+            mainWindow.Show();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"An error occurred while starting the application: {ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            Shutdown();
+        }
     }
 }
 
