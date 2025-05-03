@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DMHelper.App")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+57fc091def5c764276ed28fbee7a8b7b6cec6b20")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ad4d006a958677c1dd932c381b0e1b19ad6bb7ff")]
 [assembly: System.Reflection.AssemblyProductAttribute("DMHelper.App")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DMHelper.App")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
