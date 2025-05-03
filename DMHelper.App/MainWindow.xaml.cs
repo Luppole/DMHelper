@@ -8,6 +8,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using DMHelper.App.ViewModels;
+using DMHelper.App.Views;
 
 namespace DMHelper.App;
 
@@ -16,8 +18,20 @@ namespace DMHelper.App;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public MainWindow()
+    private readonly CampaignView _campaignView;
+
+    public MainWindow(CampaignView campaignView)
     {
+        _campaignView = campaignView;
         InitializeComponent();
+        Loaded += MainWindow_Loaded;
+    }
+
+    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (CampaignView != null)
+        {
+            CampaignView.DataContext = _campaignView.DataContext;
+        }
     }
 }
