@@ -1,0 +1,156 @@
+<UserControl x:Class="DMHelper.App.Views.CampaignView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DMHelper.App.Views"
+             xmlns:viewmodels="clr-namespace:DMHelper.App.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.DataContext>
+        <viewmodels:CampaignViewModel/>
+    </UserControl.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Campaign List -->
+        <Border Background="#2D2D30" Grid.Column="0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- New Campaign Form -->
+                <StackPanel Grid.Row="0" Margin="10">
+                    <TextBlock Text="New Campaign" 
+                             Foreground="White" 
+                             FontSize="18" 
+                             FontWeight="Bold" 
+                             Margin="0,0,0,10"/>
+                    
+                    <TextBlock Text="Name:" 
+                             Foreground="White" 
+                             Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding NewCampaignName, UpdateSourceTrigger=PropertyChanged}"
+                             Background="#3E3E42"
+                             Foreground="White"
+                             BorderBrush="#007ACC"
+                             Padding="5"
+                             Margin="0,0,0,10"/>
+                    
+                    <TextBlock Text="Description:" 
+                             Foreground="White" 
+                             Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding NewCampaignDescription, UpdateSourceTrigger=PropertyChanged}"
+                             Background="#3E3E42"
+                             Foreground="White"
+                             BorderBrush="#007ACC"
+                             Padding="5"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             Height="60"
+                             Margin="0,0,0,10"/>
+                    
+                    <Button Content="Create Campaign" 
+                            Command="{Binding CreateCampaignCommand}"
+                            Background="#007ACC"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Padding="10,5"
+                            Margin="0,0,0,10"/>
+                </StackPanel>
+
+                <!-- Campaign List -->
+                <ListView Grid.Row="1" 
+                          ItemsSource="{Binding Campaigns}"
+                          SelectedItem="{Binding SelectedCampaign}"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          Margin="10">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,5">
+                                <TextBlock Text="{Binding Name}" 
+                                         Foreground="White" 
+                                         FontSize="16"/>
+                                <TextBlock Text="{Binding Description}" 
+                                         Foreground="#CCCCCC" 
+                                         TextWrapping="Wrap"
+                                         Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+        </Border>
+
+        <!-- Campaign Details -->
+        <Border Background="#1E1E1E" Grid.Column="1">
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Campaign Details Header -->
+                <StackPanel Grid.Row="0">
+                    <TextBlock Text="{Binding SelectedCampaign.Name, FallbackValue='Select a Campaign'}" 
+                             Foreground="White" 
+                             FontSize="24" 
+                             FontWeight="Bold"/>
+                    
+                    <TextBlock Text="{Binding SelectedCampaign.Description}" 
+                             Foreground="#CCCCCC" 
+                             TextWrapping="Wrap"
+                             Margin="0,10,0,0"/>
+                    
+                    <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                        <Button Content="Save Changes" 
+                                Command="{Binding SaveCampaignCommand}"
+                                Background="#007ACC"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Padding="10,5"
+                                Margin="0,0,10,0"/>
+                        
+                        <Button Content="Delete Campaign" 
+                                Command="{Binding DeleteCampaignCommand}"
+                                Background="#E51400"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Padding="10,5"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Campaign Content -->
+                <TabControl Grid.Row="1" 
+                           Margin="0,20,0,0"
+                           Background="Transparent"
+                           BorderThickness="0">
+                    <TabItem Header="Sessions">
+                        <TextBlock Text="Sessions content will go here" 
+                                 Foreground="White"/>
+                    </TabItem>
+                    <TabItem Header="NPCs">
+                        <TextBlock Text="NPCs content will go here" 
+                                 Foreground="White"/>
+                    </TabItem>
+                    <TabItem Header="Locations">
+                        <TextBlock Text="Locations content will go here" 
+                                 Foreground="White"/>
+                    </TabItem>
+                    <TabItem Header="Players">
+                        <TextBlock Text="Players content will go here" 
+                                 Foreground="White"/>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl> 
