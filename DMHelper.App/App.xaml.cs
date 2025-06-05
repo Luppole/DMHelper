@@ -64,6 +64,7 @@ public partial class App : Application
 
             // ViewModels
             services.AddTransient<CampaignViewModel>();
+            services.AddTransient<CombatTrackerViewModel>();
             services.AddTransient<MainWindowViewModel>();
 
             // Views
