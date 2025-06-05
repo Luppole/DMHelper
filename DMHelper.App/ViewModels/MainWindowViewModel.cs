@@ -14,9 +14,13 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private CampaignViewModel _campaignViewModel;
 
-    public MainWindowViewModel(CampaignViewModel campaignViewModel)
+    [ObservableProperty]
+    private CombatTrackerViewModel _combatTrackerViewModel;
+
+    public MainWindowViewModel(CampaignViewModel campaignViewModel, CombatTrackerViewModel combatTrackerViewModel)
     {
         _campaignViewModel = campaignViewModel;
+        _combatTrackerViewModel = combatTrackerViewModel;
     }
 
     [RelayCommand]
